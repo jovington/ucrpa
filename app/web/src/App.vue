@@ -68,7 +68,7 @@ onUnmounted(() => {
   --brand-blue: #2088c2; 
   --brand-green: #156c36;
   --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
+  --text-muted: #E2E8F0; /* Color más claro para mejor contraste */
 }
 
 html {
@@ -157,6 +157,10 @@ body {
     border-radius: 12px;
     margin-top: 1rem;
     border: 1px solid rgba(255,255,255,0.05);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
 }
 
 .footer {
