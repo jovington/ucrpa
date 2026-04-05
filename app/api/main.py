@@ -55,6 +55,7 @@ client = AsyncIOMotorClient(MONGO_URI)
 db = client.pdf_manager_db
 documents_collection = db.get_collection("documents")
 users_collection = db.get_collection("users")
+inscripciones_collection = db.get_collection("inscripciones_k9")
 
 # Ayuda para serialización
 def document_helper(doc) -> dict:
@@ -87,6 +88,33 @@ class UserLogin(BaseModel):
 class UserVerify(BaseModel):
     email: EmailStr
     code: str
+
+class Acompanante(BaseModel):
+    nombre: str
+    dni: str
+
+class K9Inscripcion(BaseModel):
+    lugar: str
+    fecha: str
+    guia_nombre: str
+    guia_dni: str
+    guia_nacimiento: str
+    perro_nombre: str
+    perro_raza: str
+    perro_sexo: str
+    perro_chip: str
+    perro_nacimiento: str
+    vacuna_antirrabica: bool
+    vacuna_otras: bool
+    desparasitacion: bool
+    seguro_rc: str
+    cert_primero_aux_humano: str
+    cert_primero_aux_vet: str
+    nivel_obediencia: str
+    nivel_grandes_areas: str
+    nivel_escombros: str
+    acompanantes: List[Acompanante]
+    autorizacion_fotos: bool
 
 class Token(BaseModel):
     access_token: str
@@ -263,3 +291,17 @@ async def download_document(document_id: str):
         raise HTTPException(status_code=404, detail="El archivo físico no existe en el almacenamiento.")
         
     return FileResponse(path=file_location, filename=doc["filename"], media_type='application/pdf')
+
+
+@app.post("/inscripciones/k9")
+async def save_k9_inscription(
+    data: K9Inscripcion,
+    current_user: dict = Depends(get_current_user)
+):
+    inscripcion_dict = data.model_dump() # Pydantic v2
+    inscripcion_dict["user_email"] = current_user["email"]
+    inscripcion_dict["agrupacion"] = current_user["agrupacion"]
+    inscripcion_dict["created_at"] = datetime.utcnow()
+    
+    result = await inscripciones_collection.insert_one(inscripcion_dict)
+    return {"id": str(result.inserted_id), "message": "Inscripción guardada correctamente."}
