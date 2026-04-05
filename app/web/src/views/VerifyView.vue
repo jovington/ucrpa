@@ -45,6 +45,7 @@ import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
+const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
 const email = ref(route.query.email || '');
 const code = ref('');
 const errorMsg = ref('');
@@ -62,7 +63,7 @@ const handleVerify = async () => {
     errorMsg.value = '';
     
     try {
-        const response = await fetch('http://localhost:8000/auth/verify', {
+        const response = await fetch(`${API_URL}/auth/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

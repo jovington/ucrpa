@@ -48,7 +48,9 @@
 <script setup>
 import { ref } from 'vue';
 
-const API_URL = 'http://localhost:8000'; 
+// En un entorno profesional esto se configuraría vía variables de entorno.
+// Usamos el host actual para que funcione tanto en local como en red local (192.168.1.26).
+const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`; 
 const isSubmitting = ref(false);
 const successMsg = ref('');
 const errorMsg = ref('');

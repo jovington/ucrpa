@@ -11,7 +11,7 @@
           <h3 class="filename" :title="doc.filename">{{ doc.filename }}</h3>
           <p class="meta">{{ formatDate(doc.upload_date) }} &bull; {{ formatSize(doc.size_bytes) }}</p>
         </div>
-        <a :href="`http://localhost:8000/download/${doc.id}`" target="_blank" class="action-btn">
+        <a :href="`${API_URL}/download/${doc.id}`" target="_blank" class="action-btn">
           Abrir
         </a>
       </div>
@@ -21,6 +21,8 @@
 
 <script setup>
 import { defineProps } from 'vue';
+
+const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
 
 const props = defineProps({
   documents: {

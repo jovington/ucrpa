@@ -39,6 +39,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
 const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
@@ -53,7 +54,7 @@ const handleLogin = async () => {
         formData.append('username', email.value);
         formData.append('password', password.value);
         
-        const response = await fetch('http://localhost:8000/auth/login', {
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             body: formData
         });

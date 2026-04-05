@@ -59,6 +59,7 @@
 import { ref } from 'vue';
 
 const email = ref('');
+const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
 const password = ref('');
 const agrupacion = ref('');
 const groupType = ref('Existente');
@@ -71,7 +72,7 @@ const handleRegister = async () => {
     errorMsg.value = '';
     
     try {
-        const response = await fetch('http://localhost:8000/auth/register', {
+        const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
