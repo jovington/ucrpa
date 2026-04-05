@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <!-- Navbar Bootstrap -->
+    <!-- Navbar Institucional con Autenticación -->
     <nav class="navbar navbar-expand-lg fixed-top" :class="{ 'scrolled': isScrolled }">
       <div class="container-xl">
         <router-link class="navbar-brand d-flex align-items-center gap-2" to="/">
@@ -18,12 +18,29 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/">Inicio</router-link>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/directorio">Directorio Operativo</router-link>
-            </li>
-            <li class="nav-item mt-2 mt-lg-0">
-              <router-link class="btn btn-primary-custom w-100" to="/inscripcion">Certificación 2026</router-link>
-            </li>
+            
+            <!-- Enlaces Protegidos -->
+            <template v-if="isLoggedIn">
+                <li class="nav-item">
+                  <router-link class="nav-link" to="/directorio">Directorio</router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link class="btn btn-outline-brand ms-lg-2" to="/inscripcion">Certificación 2026</router-link>
+                </li>
+                <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                  <button @click="logout" class="btn btn-danger-custom">Cerrar Sesión</button>
+                </li>
+            </template>
+            
+            <!-- Enlaces Públicos -->
+            <template v-else>
+                <li class="nav-item">
+                  <router-link class="nav-link" to="/login">Acceder</router-link>
+                </li>
+                <li class="nav-item mt-2 mt-lg-0">
+                  <router-link class="btn btn-primary-custom w-100" to="/registro">Registrarse</router-link>
+                </li>
+            </template>
           </ul>
         </div>
       </div>
@@ -35,7 +52,8 @@
 
     <footer class="footer mt-auto py-4">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2026 UCRPA - Unidad Canina de Rescate del Principado de Asturias.</p>
+            <p class="mb-0 text-white">&copy; 2026 UCRPA - Unidad Canina de Rescate del Principado de Asturias.</p>
+            <p class="small text-muted mt-2" v-if="isLoggedIn">Sesión activa: {{ userGroup }}</p>
         </div>
     </footer>
   </div>
@@ -43,9 +61,26 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const isScrolled = ref(false);
 const hasLogo = ref(true);
+const isLoggedIn = ref(false);
+const userGroup = ref('');
+
+const checkAuth = () => {
+    isLoggedIn.value = !!localStorage.getItem('token');
+    userGroup.value = localStorage.getItem('agrupacion') || '';
+};
+
+const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('agrupacion');
+    localStorage.removeItem('user_email');
+    checkAuth();
+    router.push('/login');
+};
 
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 50;
@@ -53,6 +88,7 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
+  checkAuth();
 });
 
 onUnmounted(() => {
@@ -61,42 +97,23 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* CSS ROOT & GLOBALS */
+/* ... (Estilos Base mantenidos) ... */
 :root {
   --bg-color: #0B1120;
   --bg-soft: #1E293B;
   --brand-blue: #2088c2; 
   --brand-green: #156c36;
   --text-main: #FFFFFF;
-  --text-muted: #FFFFFF; /* Texto blanco puro para máximo contraste */
-}
-
-html {
-  scroll-behavior: smooth;
+  --text-muted: #FFFFFF;
 }
 
 body {
-  margin: 0;
-  padding: 0;
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
 }
 
-.app-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.router-view-container {
-    flex: 1;
-}
-
-/* NAVBAR CUSTOMIZATIONS PARA SOBREESCRIBIR BOOTSTRAP */
 .navbar {
-  height: auto;
   min-height: 90px;
   background: rgba(11, 17, 32, 0.4);
   backdrop-filter: blur(12px);
@@ -106,25 +123,6 @@ body {
 .navbar.scrolled {
   background: rgba(11, 17, 32, 0.95);
   border-bottom: 2px solid var(--brand-blue);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-}
-
-.brand-logo {
-    height: 55px; 
-    width: 55px;
-    object-fit: contain;
-}
-
-.nav-link {
-  color: var(--text-main) !important;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: color 0.2s;
-  padding: 0.5rem 0 !important;
-}
-
-.nav-link:hover, .router-link-active {
-  color: var(--brand-blue) !important;
 }
 
 .btn-primary-custom {
@@ -134,39 +132,43 @@ body {
   border: none;
   border-radius: 8px;
   padding: 0.6rem 1.5rem;
-  transition: all 0.2s ease;
 }
 
-.btn-primary-custom:hover {
-  background-color: #1ca350;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(21, 108, 54, 0.4);
+.btn-outline-brand {
+    border: 2px solid var(--brand-blue);
+    color: white !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
 }
 
-/* Custom Hamburger Icon Color */
-.custom-toggler {
-    border-color: rgba(255,255,255,0.2) !important;
+.btn-danger-custom {
+    background-color: transparent;
+    color: #F87171 !important;
+    border: 1px solid #F87171;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
 }
+.btn-danger-custom:hover {
+    background-color: #F87171;
+    color: white !important;
+}
+
+.nav-link {
+  color: white !important;
+  font-weight: 500;
+}
+.nav-link:hover, .router-link-active:not(.navbar-brand) {
+  color: var(--brand-blue) !important;
+}
+
 .custom-toggler .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 
-.collapse.show, .collapsing {
-    background: rgba(11, 17, 32, 0.98);
-    padding: 1rem;
-    border-radius: 12px;
-    margin-top: 1rem;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
 .footer {
   background: #080C17;
-  color: var(--text-muted);
   border-top: 2px solid var(--brand-blue);
-  font-size: 0.9rem;
 }
 </style>

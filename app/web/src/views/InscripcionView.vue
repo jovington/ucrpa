@@ -71,6 +71,7 @@ const submitForm = async () => {
     isSubmitting.value = true;
     errorMsg.value = '';
     successMsg.value = '';
+    const token = localStorage.getItem('token');
 
     try {
         if (form.value.file) {
@@ -79,6 +80,9 @@ const submitForm = async () => {
 
             const fileRes = await fetch(`${API_URL}/upload`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
 

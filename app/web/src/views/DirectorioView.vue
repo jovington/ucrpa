@@ -55,9 +55,20 @@ const errorMessage = ref(null);
 const fileInput = ref(null);
 
 const fetchDocuments = async () => {
+  const token = localStorage.getItem('token');
   try {
-    const response = await fetch(`${API_URL}/documents`);
-    if (!response.ok) throw new Error('Network error');
+    const response = await fetch(`${API_URL}/documents`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    if (!response.ok) {
+        if (response.status === 401) {
+             errorMessage.value = "Sesión expirada. Por favor, entre de nuevo.";
+             localStorage.removeItem('token');
+        }
+        throw new Error('Error de red o sesión');
+    }
     documents.value = await response.json();
   } catch (error) {
     console.error("Error fetching docs", error);
@@ -93,12 +104,16 @@ const handleFileSelect = (e) => {
 const uploadFile = async (file) => {
   isUploading.value = true;
   errorMessage.value = null;
+  const token = localStorage.getItem('token');
   const formData = new FormData();
   formData.append('file', file);
 
   try {
     const response = await fetch(`${API_URL}/upload`, {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
       body: formData,
     });
     if (!response.ok) {

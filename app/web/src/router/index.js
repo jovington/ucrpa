@@ -10,14 +10,31 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/registro',
+      name: 'registro',
+      component: () => import('../views/RegisterView.vue')
+    },
+    {
+      path: '/verificar',
+      name: 'verificar',
+      component: () => import('../views/VerifyView.vue')
+    },
+    {
       path: '/directorio',
       name: 'directorio',
-      component: () => import('../views/DirectorioView.vue')
+      component: () => import('../views/DirectorioView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/inscripcion',
       name: 'inscripcion',
-      component: () => import('../views/InscripcionView.vue')
+      component: () => import('../views/InscripcionView.vue'),
+      meta: { requiresAuth: true }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -27,5 +44,16 @@ const router = createRouter({
     return { top: 0 }
   }
 })
+
+// Navegación Protegida (Navigation Guard)
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token');
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login');
+  } else {
+    next();
+  }
+});
 
 export default router

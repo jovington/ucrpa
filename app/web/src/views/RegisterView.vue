@@ -1,0 +1,133 @@
+<template>
+  <div class="page-container py-5">
+    <div class="container py-lg-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="form-card shadow-lg">
+                    <h2 class="display-6 fw-bold mb-4 text-center">Registro Institucional</h2>
+                    <div class="accent-bar mx-auto mb-4"></div>
+
+                    <form @submit.prevent="handleRegister" v-if="!isRegistered">
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Email Institucional</label>
+                            <input type="email" class="form-control custom-input" required v-model="email" placeholder="example@ucrpa.es">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Agrupación / Unidad</label>
+                            <div class="group-select d-flex gap-2">
+                                <select class="form-select custom-input" required v-model="groupType" @change="agrupacion = groupType === 'Personal' ? 'Personal' : ''">
+                                    <option value="Existente">Agrupación Existente</option>
+                                    <option value="Personal">Personal / Individual</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4" v-if="groupType === 'Existente'">
+                            <label class="form-label text-muted">Nombre de la Agrupación</label>
+                            <input type="text" class="form-control custom-input" required v-model="agrupacion" placeholder="Ej: Agrupación Gijón">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Contraseña</label>
+                            <input type="password" class="form-control custom-input" required v-model="password" minlength="4" placeholder="••••••••">
+                        </div>
+
+                        <div v-if="errorMsg" class="alert alert-danger custom-danger mb-4">{{ errorMsg }}</div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100 py-3 mb-3" :disabled="isLoading">
+                            {{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta' }}
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">¿Ya tienes cuenta? <router-link to="/login" class="text-brand">Accede aquí</router-link></p>
+                        </div>
+                    </form>
+                    
+                    <div v-else class="text-center">
+                        <div class="display-1 mb-4">📧</div>
+                        <h3>¡Registro en Proceso!</h3>
+                        <p class="text-muted mb-4">Se ha generado un código de verificación para <strong>{{ email }}</strong>.</p>
+                        <p class="badge bg-warning text-dark p-2 mb-4">IMPORTANTE: Durante el periodo de pruebas el código aparece en los logs del servidor.</p>
+                        <router-link :to="{ name: 'verificar', query: { email } }" class="btn btn-primary-custom w-100 py-3">Introducir Código</router-link>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const email = ref('');
+const password = ref('');
+const agrupacion = ref('');
+const groupType = ref('Existente');
+const errorMsg = ref('');
+const isLoading = ref(false);
+const isRegistered = ref(false);
+
+const handleRegister = async () => {
+    isLoading.value = true;
+    errorMsg.value = '';
+    
+    try {
+        const response = await fetch('http://localhost:8000/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email.value,
+                password: password.value,
+                agrupacion: agrupacion.value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.detail || 'Error al completar el registro');
+        }
+        
+        isRegistered.value = true;
+    } catch (e) {
+        errorMsg.value = e.message;
+    } finally {
+        isLoading.value = false;
+    }
+};
+</script>
+
+<style scoped>
+.page-container {
+    padding-top: 100px;
+    min-height: 100vh;
+}
+.form-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2.5rem;
+}
+.accent-bar {
+    width: 50px;
+    height: 4px;
+    background: var(--brand-blue);
+    border-radius: 2px;
+}
+.text-brand {
+    color: var(--brand-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+.custom-input {
+    background-color: rgba(11, 17, 32, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    padding: 0.8rem 1rem;
+}
+.custom-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #F87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+</style>
