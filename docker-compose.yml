@@ -16,7 +16,7 @@ services:
 
   # BASE DE DATOS: MongoDB (Sin acceso externo)
   db:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: app_mongodb
     restart: always
     environment:
