@@ -67,8 +67,8 @@ onUnmounted(() => {
   --bg-soft: #1E293B;
   --brand-blue: #2088c2; 
   --brand-green: #156c36;
-  --text-main: #F8FAFC;
-  --text-muted: #E2E8F0; /* Color más claro para mejor contraste */
+  --text-main: #FFFFFF;
+  --text-muted: #FFFFFF; /* Texto blanco puro para máximo contraste */
 }
 
 html {

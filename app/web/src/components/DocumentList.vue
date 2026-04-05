@@ -63,7 +63,7 @@ const formatDate = (dateString) => {
   backdrop-filter: blur(12px);
   border: 1px dashed rgba(148, 163, 184, 0.2);
   border-radius: 16px;
-  color: #94A3B8;
+  color: white;
 }
 
 .grid {
@@ -111,7 +111,7 @@ const formatDate = (dateString) => {
 
 .meta {
   font-size: 0.85rem;
-  color: #94A3B8;
+  color: white;
   margin: 0;
 }
 
