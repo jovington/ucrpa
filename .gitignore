@@ -1,0 +1,37 @@
+# Mac OS
+.DS_Store
+**/.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+dist-ssr/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Variables de Entorno (¡Importante por seguridad!)
+.env
+.env.*
+
+# Almacenamiento Local (No subir PDFs al código)
+storage/documents/*
+!storage/documents/.keep
+storage/mongodb_data/*
+!storage/mongodb_data/.keep
+
+# Datos de Nginx Proxy Manager locales
+infra/proxy_data/*
+infra/letsencrypt/*
+!infra/proxy_data/.keep
+!infra/letsencrypt/.keep
