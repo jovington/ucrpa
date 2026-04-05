@@ -131,10 +131,13 @@ const submitForm = async () => {
 /* CUSTOM INPUTS PARA SOBREESCRIBIR BOOTSTRAP DEFAULT BLANCO */
 .custom-input {
     background-color: rgba(11, 17, 32, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: white !important;
     padding: 0.8rem 1rem;
     border-radius: 8px;
+}
+.custom-input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 .custom-input:focus {
     box-shadow: 0 0 0 0.25rem rgba(32, 136, 194, 0.25) !important;
