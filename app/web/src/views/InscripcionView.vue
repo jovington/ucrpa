@@ -1,41 +1,45 @@
 <template>
-  <div class="page-container">
-    <div class="container" style="max-width: 800px;">
-        <div class="form-card">
-            <h2 class="title">Inscripción Certificación K9</h2>
-            <p class="subtitle">Grado A, B y C (19 al 21 de Junio de 2026)</p>
-            <div class="accent-bar"></div>
+  <div class="page-container py-5">
+    <div class="container py-lg-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="form-card shadow-lg">
+                    <h2 class="display-6 fw-bold mb-2">Inscripción Certificación K9</h2>
+                    <p class="fs-5 text-success-custom fw-semibold mb-4">Grado A, B y C (19 al 21 de Junio de 2026)</p>
+                    <div class="accent-bar mb-4"></div>
 
-            <form @submit.prevent="submitForm">
-                <div class="form-group">
-                    <label>Nombre del Guía</label>
-                    <input type="text" required placeholder="Ej: Juan Pérez" v-model="form.name">
-                </div>
-                <div class="form-group">
-                    <label>Nombre del Perro</label>
-                    <input type="text" required placeholder="Ej: Rex" v-model="form.dog">
-                </div>
-                <div class="form-group">
-                    <label>Grado a certificar</label>
-                    <select required v-model="form.grade">
-                        <option value="" disabled>Seleccione grado...</option>
-                        <option value="A">Grado A. Basico.</option>
-                        <option value="B">Grado B. Nivel Medio.</option>
-                        <option value="C">Grado C. Nivel Avanzado.</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Adjuntar Cartilla Sanitaria (Opcional, en PDF)</label>
-                    <input type="file" accept="application/pdf" @change="onFileChange">
-                </div>
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Nombre del Guía</label>
+                            <input type="text" class="form-control custom-input" required placeholder="Ej: Juan Pérez" v-model="form.name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Nombre del Perro</label>
+                            <input type="text" class="form-control custom-input" required placeholder="Ej: Rex" v-model="form.dog">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Grado a certificar</label>
+                            <select class="form-select custom-input" required v-model="form.grade">
+                                <option value="" disabled>Seleccione grado...</option>
+                                <option value="A">Grado A. Básico.</option>
+                                <option value="B">Grado B. Nivel Medio.</option>
+                                <option value="C">Grado C. Nivel Avanzado.</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Adjuntar Cartilla Sanitaria (Opcional, en PDF)</label>
+                            <input type="file" class="form-control custom-file" accept="application/pdf" @change="onFileChange">
+                        </div>
 
-                <div v-if="successMsg" class="success-toast">{{ successMsg }}</div>
-                <div v-if="errorMsg" class="error-toast">{{ errorMsg }}</div>
+                        <div v-if="successMsg" class="alert alert-success custom-success">{{ successMsg }}</div>
+                        <div v-if="errorMsg" class="alert alert-danger custom-danger">{{ errorMsg }}</div>
 
-                <button type="submit" class="btn-submit" :disabled="isSubmitting">
-                    {{ isSubmitting ? 'Enviando...' : 'Enviar Inscripción' }}
-                </button>
-            </form>
+                        <button type="submit" class="btn btn-primary-custom w-100 py-3 mt-2" :disabled="isSubmitting">
+                            {{ isSubmitting ? 'Enviando Datos Seguros...' : 'Enviar Inscripción' }}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
   </div>
@@ -69,7 +73,6 @@ const submitForm = async () => {
     successMsg.value = '';
 
     try {
-        // Por el momento, si suben archivo, lo integramos con nuestro upload de PDF existente
         if (form.value.file) {
             const formData = new FormData();
             formData.append('file', form.value.file);
@@ -79,21 +82,19 @@ const submitForm = async () => {
                 body: formData,
             });
 
-            if (!fileRes.ok) throw new Error('Fallo al adjuntar el archivo.');
+            if (!fileRes.ok) throw new Error('Fallo al adjuntar el archivo PDF.');
         }
 
-        // Simulación: aquí en el futuro enviaríamos los datos textuales a otra ruta de DB
-        console.log("Inscripción recibida: ", form.value);
-        successMsg.value = '¡Inscripción enviada correctamente! Nos pondremos en contacto contigo.';
+        console.log("Inscripción enviada exitosamente: ", form.value);
+        successMsg.value = '¡Inscripción recibida correctamente! Nos pondremos en contacto contigo a la brevedad.';
         
-        // Reset
         form.value.name = '';
         form.value.dog = '';
         form.value.grade = '';
         form.value.file = null;
         
     } catch (e) {
-        errorMsg.value = e.message || 'Error en el servidor al enviar la inscripción.';
+        errorMsg.value = e.message || 'Error de conexión con el servidor.';
     } finally {
         isSubmitting.value = false;
     }
@@ -102,99 +103,69 @@ const submitForm = async () => {
 
 <style scoped>
 .page-container {
-    padding-top: 120px;
-    min-height: calc(100vh - 100px);
+    padding-top: 100px; /* Offset for navbar */
+    min-height: 100vh;
 }
 .form-card {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-    padding: 3rem;
+    padding: 2rem;
 }
-.title {
-    margin: 0;
-    font-size: 2rem;
-    color: var(--text-main);
+@media (min-width: 768px) {
+    .form-card {
+        padding: 4rem;
+    }
 }
-.subtitle {
+.text-success-custom {
     color: var(--brand-green);
-    font-weight: 600;
-    margin-top: 0.5rem;
-    margin-bottom: 1.5rem;
 }
 .accent-bar {
     width: 60px;
-    height: 4px;
+    height: 5px;
     background: var(--brand-blue);
-    margin-bottom: 2rem;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-}
-.form-group input[type="text"], .form-group select {
-    width: 100%;
-    padding: 1rem;
-    background: rgba(11, 17, 32, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+/* CUSTOM INPUTS PARA SOBREESCRIBIR BOOTSTRAP DEFAULT BLANCO */
+.custom-input {
+    background-color: rgba(11, 17, 32, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
-    font-size: 1rem;
 }
-.form-group input[type="file"] {
-    width: 100%;
-    padding: 1rem;
-    background: rgba(11, 17, 32, 0.5);
-    border: 1px dashed var(--brand-blue);
-    color: white;
-    border-radius: 8px;
+.custom-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(32, 136, 194, 0.25) !important;
+    border-color: var(--brand-blue) !important;
 }
 
-.btn-submit {
-    width: 100%;
-    padding: 1rem;
-    background: var(--brand-green);
-    color: white;
-    border: none;
+.custom-file {
+    background-color: rgba(11, 17, 32, 0.6) !important;
+    border: 1px dashed var(--brand-blue) !important;
+    color: white !important;
+    padding: 0.8rem;
     border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
+}
+.custom-file::file-selector-button {
+    background-color: var(--bg-soft);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+    margin-right: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 1rem;
-}
-.btn-submit:hover {
-    background: #1ca350;
-    transform: translateY(-2px);
-}
-.btn-submit:disabled {
-    background: #475569;
-    cursor: not-allowed;
-    transform: none;
 }
 
-.success-toast {
+.custom-success {
     background: rgba(21, 108, 54, 0.2);
     color: #4ADE80;
-    padding: 1rem;
-    border-radius: 8px;
     border: 1px solid rgba(21, 108, 54, 0.4);
-    margin-bottom: 1rem;
 }
-.error-toast {
+.custom-danger {
     background: rgba(239, 68, 68, 0.2);
     color: #F87171;
-    padding: 1rem;
-    border-radius: 8px;
     border: 1px solid rgba(239, 68, 68, 0.4);
-    margin-bottom: 1rem;
 }
 </style>
