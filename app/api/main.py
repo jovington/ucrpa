@@ -27,7 +27,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 # Configurar CORS (Para permitir la conexión desde el frontend de Vue.js)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción se debe restringir al dominio de la web
+    allow_origins=[
+        "http://web.ucrpa.local",
+        "http://192.168.1.26",
+        "http://localhost",
+        "http://localhost:80",
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

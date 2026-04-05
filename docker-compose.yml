@@ -32,6 +32,8 @@ services:
     build: ./app/api
     container_name: app_api
     restart: always
+    ports:
+      - "8000:8000"
     environment:
       MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/
       STORAGE_PATH: /app/data/documents
