@@ -48,9 +48,9 @@
 <script setup>
 import { ref } from 'vue';
 
-// En un entorno profesional esto se configuraría vía variables de entorno.
-// Usamos el host actual para que funcione tanto en local como en red local (192.168.1.26).
-const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`; 
+const API_URL = window.location.hostname.includes('ucrpa.local') 
+                ? `${window.location.protocol}//api.ucrpa.local:8001`
+                : `${window.location.protocol}//${window.location.hostname}:8001`; 
 const isSubmitting = ref(false);
 const successMsg = ref('');
 const errorMsg = ref('');

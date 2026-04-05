@@ -29,9 +29,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://web.ucrpa.local",
+        "http://api.ucrpa.local",
+        "http://api.ucrpa.local:8001",
         "http://192.168.1.26",
+        "http://192.168.1.26:8001",
         "http://localhost",
         "http://localhost:80",
+        "http://localhost:8001",
         "http://localhost:5173",
     ],
     allow_credentials=True,

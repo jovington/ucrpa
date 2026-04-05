@@ -39,7 +39,9 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const API_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
+const API_URL = window.location.hostname.includes('ucrpa.local') 
+                ? `${window.location.protocol}//api.ucrpa.local:8001`
+                : `${window.location.protocol}//${window.location.hostname}:8001`;
 const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
